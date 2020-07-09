@@ -63,6 +63,14 @@ module Enumerable
     end
     counting
   end
+
+  def my_map
+    arr = []
+    for i in self
+      arr.push(yield i)
+    end
+    arr
+  end
 end
 
 numbers = [4,1,3,2,6,7,1,7,7]
@@ -73,3 +81,4 @@ p numbers.my_all? {|number| number > 0}
 p numbers.my_any? {|number| number > 1}
 p numbers.my_none? {|number| number < 2}
 p numbers.my_count(7)
+p numbers.my_map { |n| n * 2 }
