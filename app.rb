@@ -68,7 +68,7 @@ module Enumerable
     arr = []
     for i in self
       if (proc != nil)
-        arr.push(proc)
+        arr.push(proc.call(i))
       else
         arr.push(yield i)
       end
@@ -106,10 +106,8 @@ p numbers.my_all? {|number| number > 0}
 p numbers.my_any? {|number| number > 1}
 p numbers.my_none? {|number| number < 2}
 p numbers.my_count(6)
-p numbers.my_map { |n| n + 2 }
+my_map_variable = Proc.new { |n| n * 2 }
+p numbers.my_map() { |n| n + 2 }
+p numbers.my_map(my_map_variable) { |n| n + 2 }
 p numbers.my_inject(1) { |product, n| product + n }
 p multiply_els([2,4,5])
-
-my_map_variable = Proc.new { |n| n * 2 }
-p numbers.my_map(&my_map_variable)
-
