@@ -1,18 +1,26 @@
 module Enumerable
   def my_each
+    return enum_for unless block_given?
     i = 0
-    while i < length
-      yield self[i]
+    new_array = self.is_a?(Range) ? self.to_a : self
+    new_array = self.is_a?(Hash) ? self.to_a : self
+    while i < new_array.length
+      yield new_array[i]
       i += 1
     end
+    new_array
   end
 
   def my_each_with_index
+    return enum_for unless block_given?
     i = 0
-    while i < length
-      yield self[i], i
+    # new_array = self.is_a?(Range) ? self.to_a : self
+    new_array = self.is_a?(Hash) ? self.to_a : self
+    while i < new_array.length
+      yield new_array[i], i
       i += 1
     end
+    new_array
   end
 
   def my_select
@@ -112,6 +120,7 @@ def multiply_els(arr)
   arr.my_inject { |product, n| product * n }
 end
 
+<<<<<<< HEAD
 # p [1, 2, 3].my_select
 # p [1, true, 'hi', []].my_all?
 # p [1.0, 2.0, 3.0].my_all?(Float)
@@ -123,3 +132,16 @@ end
 # p ['dog','door','dish'].my_none?(/dog/)
 p [1, 2, 3].my_count
 p (1..5).my_count
+=======
+
+# puts (1..5).my_each { |num| num < 6}
+# test = {"a" => 1, "b" => 2, "c" => 3}
+# test.my_each{|key, value| puts "#{key}, #{value}" } 
+
+# p [1,2,3,4,5].my_each_with_index { |num| num < 6}
+# # p (1..5).my_each_with_index { |num| num < 6}
+# (1..5).my_each_with_index { |num, i| puts "Num: #{num}, index: #{i}"}
+
+test = {"a" => 1, "b" => 2, "c" => 3}
+test.my_each_with_index {|num, i| puts "#{num}, #{i}" } 
+>>>>>>> fca576c0cd21b050000695ea9b62f1e49d697619
