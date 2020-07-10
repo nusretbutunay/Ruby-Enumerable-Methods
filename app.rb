@@ -64,15 +64,15 @@ module Enumerable
     condition
   end
 
-  def my_none?
-    condition = true
-    each do |j|
-      condition = false if yield(j)
-    end
-    condition
+  def my_none?(arg = nil)
+    !self.my_any?(arg)
   end
 
-  def my_count(counted)
+  def my_count(counted = nil)
+    new_array = self.is_a?
+    if counted == nil
+      return self.length
+    end
     counting = 0
     each do |j|
       counting += 1 if j == counted
@@ -117,7 +117,9 @@ end
 # p [1.0, 2.0, 3.0].my_all?(Float)
 # p ['dog','door','dish'].my_all?(/d/)
 # p [1, 'dog' , 1].my_any?
-# p ['a', 'b', 3].my_any?(Integer)
-# p ['b', 2i, 'a'].my_any?(Numeric)
-# p ['dog','door','dish'].my_any?(/s/)
-# p ['dog','door','dish'].my_any?(/dog/)
+# p ['a', 'b', 3].my_none?(Integer)
+# p ['b', 2i, 'a'].my_none?(Numeric)
+# p ['dog','door','dish'].my_none?(/s/)
+# p ['dog','door','dish'].my_none?(/dog/)
+p [1, 2, 3].my_count
+p (1..5).my_count
