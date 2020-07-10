@@ -77,13 +77,23 @@ module Enumerable
   end
 
   def my_count(counted = nil)
-    new_array = self.is_a?
-    if counted == nil
-      return self.length
+    j = 0
+    new_array = self.is_a?(Range) ? self.to_a : self
+    if counted == nil && !block_given?
+      return new_array.length
     end
     counting = 0
-    each do |j|
-      counting += 1 if j == counted
+    if block_given?
+      while j < new_array.length
+        counting+=1 if yield new_array[j]
+        j+=1
+      end
+  end
+    unless counted == nil
+      while j < new_array.length
+        counting+=1 if new_array[j] == counted
+        j+=1
+      end
     end
     counting
   end
@@ -120,7 +130,6 @@ def multiply_els(arr)
   arr.my_inject { |product, n| product * n }
 end
 
-<<<<<<< HEAD
 # p [1, 2, 3].my_select
 # p [1, true, 'hi', []].my_all?
 # p [1.0, 2.0, 3.0].my_all?(Float)
@@ -130,18 +139,7 @@ end
 # p ['b', 2i, 'a'].my_none?(Numeric)
 # p ['dog','door','dish'].my_none?(/s/)
 # p ['dog','door','dish'].my_none?(/dog/)
-p [1, 2, 3].my_count
-p (1..5).my_count
-=======
-
-# puts (1..5).my_each { |num| num < 6}
-# test = {"a" => 1, "b" => 2, "c" => 3}
-# test.my_each{|key, value| puts "#{key}, #{value}" } 
-
-# p [1,2,3,4,5].my_each_with_index { |num| num < 6}
-# # p (1..5).my_each_with_index { |num| num < 6}
-# (1..5).my_each_with_index { |num, i| puts "Num: #{num}, index: #{i}"}
-
-test = {"a" => 1, "b" => 2, "c" => 3}
-test.my_each_with_index {|num, i| puts "#{num}, #{i}" } 
->>>>>>> fca576c0cd21b050000695ea9b62f1e49d697619
+# p [1, 2, 3].my_count(3)
+# p (1..5).my_count
+# p [1, 2, 3, 4, 5].my_count {|num| num > 3}
+# p [1, 2, 3].count{ |num| num + 1 }
