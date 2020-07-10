@@ -44,11 +44,24 @@ module Enumerable
     condition
   end
 
-  def my_any?
-    each do |j|
-      return true if yield(j)
+  def my_any?(arg = nil)
+    condition = false
+    if arg != nil
+      each do |j|
+        condition = true if j.class == arg #|| arg.match(j)
+      end
     end
-    false
+    unless block_given?
+      each do |j|
+        condition = true if j
+      end
+    end
+    if block_given? 
+      each do |j|
+      condition = true if yield(j)
+      end
+    end
+    condition
   end
 
   def my_none?
@@ -103,3 +116,8 @@ end
 # p [1, true, 'hi', []].my_all?
 # p [1.0, 2.0, 3.0].my_all?(Float)
 # p ['dog','door','dish'].my_all?(/d/)
+# p [1, 'dog' , 1].my_any?
+# p ['a', 'b', 3].my_any?(Integer)
+# p ['b', 2i, 'a'].my_any?(Numeric)
+# p ['dog','door','dish'].my_any?(/s/)
+# p ['dog','door','dish'].my_any?(/dog/)
