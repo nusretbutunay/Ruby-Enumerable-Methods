@@ -28,7 +28,7 @@ module Enumerable
     condition = true
     if arg != nil
       each do |j|
-        condition = false unless 
+        condition = false unless j.class == arg || arg.match(j)
       end
     end
     unless block_given?
@@ -101,4 +101,5 @@ end
 
 # p [1, 2, 3].my_select
 # p [1, true, 'hi', []].my_all?
-p [1, 2, 3].my_all?(Integer)
+# p [1.0, 2.0, 3.0].my_all?(Float)
+# p ['dog','door','dish'].my_all?(/d/)
