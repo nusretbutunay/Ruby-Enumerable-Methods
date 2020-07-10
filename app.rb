@@ -16,6 +16,7 @@ module Enumerable
   end
 
   def my_select
+    return enum_for unless block_given?
     new_numbers = []
     each do |i|
       new_numbers.push(i) if yield(i)
@@ -23,10 +24,22 @@ module Enumerable
     new_numbers
   end
 
-  def my_all?
+  def my_all?(arg)
     condition = true
-    each do |j|
+    if arg != nil
+      each do |j|
+        condition = false unless 
+      end
+    end
+    unless block_given?
+      each do |j|
+        condition = false unless j
+      end
+    end
+    if block_given? 
+      each do |j|
       condition = false unless yield(j)
+      end
     end
     condition
   end
@@ -85,3 +98,7 @@ end
 def multiply_els(arr)
   arr.my_inject { |product, n| product * n }
 end
+
+# p [1, 2, 3].my_select
+# p [1, true, 'hi', []].my_all?
+p [1, 2, 3].my_all?(Integer)
