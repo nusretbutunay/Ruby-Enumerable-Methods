@@ -177,7 +177,7 @@ module Enumerable
       end
       product = yield product, arg[0] unless arg[0].nil?
     end
-    raise LocalJumpError unless block_given?
+    raise LocalJumpError if !block_given? && arg.empty?
 
     product
   end
