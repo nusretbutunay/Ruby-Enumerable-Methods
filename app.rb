@@ -4,11 +4,19 @@ module Enumerable
 
     i = 0
     new_array = self
-    new_array = to_a if is_a?(Range) || is_a?(Hash)
-    while i < new_array.length
-      yield new_array[i]
-      i += 1
+    new_array = to_a if is_a?(Hash)
+    if is_a?(Range)
+      each do |n|
+        yield n
+      end
+      return self
+    else
+      while i < new_array.length
+        yield new_array[i]
+        i += 1
+      end
     end
+
     new_array
   end
 
@@ -16,12 +24,22 @@ module Enumerable
     return enum_for unless block_given?
 
     i = 0
+    j = 1
     new_array = self
-    new_array = to_a if is_a?(Range) || is_a?(Hash)
-    while i < new_array.length
-      yield new_array[i], i
-      i += 1
+    new_array = to_a if is_a?(Hash)
+    if is_a?(Range)
+      step(j).each do |n|
+        yield n, j
+        j += 1
+      end
+      return self
+    else
+      while i < new_array.length
+        yield new_array[i], i
+        i += 1
+      end
     end
+
     new_array
   end
 
@@ -34,26 +52,66 @@ module Enumerable
   end
 
   def my_all?(arg = nil)
-    return false if arg.nil? && !block_given? && !my_each { |j| j }
-
-    unless arg.nil?
-      return false unless my_each { |j| j.class == arg || arg.match(j) }
+    each do |j|
+      if block_given?
+        return false unless yield j
+      end
+      if !block_given? && arg.nil?
+        return false if j == false || j.nil?
+      end
+      unless arg.nil?
+        if arg.is_a?(Class)
+          return false unless j.is_a?(arg)
+        elsif arg.class == Regexp
+          return false unless arg.match(j)
+        else
+          return false unless arg == j
+        end
+      end
     end
-    return false if block_given? && !my_each { |j| yield(j) }
-
     true
   end
 
   def my_any?(arg = nil)
-    return true unless arg.nil? || !my_each { |j| j.class == arg }
-    return true unless block_given? || !my_each { |j| j }
-    return true if block_given? && my_each { |j| yield(j) }
-
-    true
+    each do |j|
+      if block_given?
+        return true if yield j
+      end
+      if arg.nil? && !block_given?
+        return true if j
+      end
+      unless arg.nil?
+        if arg.is_a?(Class)
+          return true if j.is_a?(arg)
+        elsif arg.class == Regexp
+          return true if arg.match(j)
+        else
+          return true unless arg != j
+        end
+      end
+    end
+    false
   end
 
   def my_none?(arg = nil)
-    !my_any?(arg)
+    each do |j|
+      if block_given?
+        return false if yield j
+      end
+      if arg.nil? && !block_given?
+        return false if j
+      end
+      if arg.class == Regexp
+        return false if arg.match(j)
+      end
+      unless arg.nil? && !arg.is_a?(Class)
+        return false if arg == j
+      end
+      if arg.is_a? Class
+        return false if j.is_a?(arg)
+      end
+    end
+    true
   end
 
   def my_count(counted = nil)
