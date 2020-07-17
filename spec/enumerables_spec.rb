@@ -3,6 +3,7 @@ require './app'
 describe Enumerable do
   let(:array) { [1, 2, 3] }
   let(:block) { proc { |x| x * 2 } }
+  let(:inject_block) { proc { |prod, n| prod * n } }
   let(:block_with_index) { proc { |num, i| puts "Num: #{num}, index: #{i}" } }
   let(:range) { (1..5) }
   let(:my_hash) { { first_name: 'somoye', second_name: 'nusret' } }
@@ -80,31 +81,27 @@ describe Enumerable do
       expect(array.my_all?).to eq(array.all?)
     end
 
-    it 'return true if none of the array items are false or nil when no block or argument given' do
+    it 'return true if all of the array items are member of class given' do
       expect(array.my_all?(Numeric)).to eq(array.all?(Numeric))
     end
 
-    it 'return true if none of the array items are false or nil when no block or argument given' do
+    it 'return true if all of the array items matches the Regex given' do
       expect(array.my_all?(rg)).to eq(array.all?(rg))
     end
 
-    it 'return true if none of the array items are false or nil when no block or argument given' do
+    it 'return true if all of the array items matches the value given' do
       expect(array.my_all?(3)).to eq(array.all?(3))
     end
 
-    it 'return true if none of the array items are false or nil when no block or argument given' do
+    it 'return true if none of the range items are false or nil when no block or argument given' do
       expect(range.my_all?).to eq(range.all?)
     end
 
-    it 'return true if none of the array items are false or nil when no block or argument given' do
+    it 'return true if all of the range items are member of class given' do
       expect(range.my_all?(Numeric)).to eq(range.all?(Numeric))
     end
 
-    it 'return true if none of the array items are false or nil when no block or argument given' do
-      expect(range.my_all?(rg)).to eq(range.all?(rg))
-    end
-
-    it 'return true if none of the array items are false or nil when no block or argument given' do
+    it 'return true if all of the range items matches the given value' do
       expect(range.my_all?(3)).to eq(range.all?(3))
     end
   end
@@ -158,6 +155,88 @@ describe Enumerable do
 
     it 'return true if none of the range items matches the given value' do
       expect(range.my_none?(3)).to eq(range.none?(3))
+    end
+  end
+
+  describe '#my_count' do
+    it 'returns the number of items in the array through enumeration' do
+      expect(array.my_count).to eq(array.count)
+    end
+
+    it 'returns the number of items in the range through enumeration' do
+      expect(range.my_count).to eq(range.count)
+    end
+
+    it 'returns the number of items in the range through enumeration' do
+      expect(array.my_count(&block)).to eq(array.count(&block))
+    end
+
+    it 'returns the number of items in the array through enumeration' do
+      expect(array.my_count(3)).to eq(array.count(3))
+    end
+
+    it 'returns the number of items in the range through enumeration' do
+      expect(range.my_count(3)).to eq(range.count(3))
+    end
+  end
+
+  describe '#my_map' do
+    it 'returns an Enumerator if no block is given' do
+      expect(array.my_map).to be_a(Enumerator)
+    end
+
+    it 'returns an Enumerator if no block is given' do
+      expect(range.my_map).to be_a(Enumerator)
+    end
+
+    it 'returns a new array after block executed for each item' do
+      expect(array.my_map(&block)).to eq(array.map(&block))
+    end
+
+    it 'returns a new array after block executed for each item' do
+      expect(range.my_map(&block)).to eq(range.map(&block))
+    end
+
+    it 'Iterates through the hash and executes block' do
+      expect(my_hash.my_map(&block)).to eq(my_hash.map(&block))
+    end
+
+    it 'Iterates through the hash and executes block' do
+      expect(my_hash.my_map(&hash_block)).to eq(my_hash.map(&hash_block))
+    end
+  end
+
+  describe '#my_inject' do
+    it 'combine all elements of enum by applying a binary operation, specified by a block' do
+      expect(array.my_inject(&inject_block)).to eq(array.inject(&inject_block))
+    end
+
+    it 'combine all elements of enum by applying a binary operation, specified by a block and the value' do
+      expect(array.my_inject(3, &inject_block)).to eq(array.inject(3, &inject_block))
+    end
+
+    it 'combine all elements of enum by applying a binary operation, specified by a block' do
+      expect(range.my_inject(&inject_block)).to eq(range.inject(&inject_block))
+    end
+
+    it 'combine all elements of enum by applying a binary operation, specified by a block and the value' do
+      expect(range.my_inject(3, &inject_block)).to eq(range.inject(3, &inject_block))
+    end
+
+    it 'combine each element of the collection by applying the symbol' do
+      expect(array.my_inject(:+)).to eq(array.inject(:+))
+    end
+
+    it 'combine each element of the collection by applying the symbol' do
+      expect(array.my_inject(3, :*)).to eq(array.inject(3, :*))
+    end
+
+    it 'combine each element by applying the symbol' do
+      expect(range.my_inject(:+)).to eq(range.inject(:+))
+    end
+
+    it 'combine each element of the collection by applying the symbol and inject the value given' do
+      expect(range.my_inject(3, :*)).to eq(range.inject(3, :*))
     end
   end
 end
