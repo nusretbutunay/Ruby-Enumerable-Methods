@@ -3,7 +3,7 @@ require './app'
 describe Enumerable do
   let(:array) { [1, 2, 3] }
   let(:block) { proc { |x| x * 2 } }
-  let(:block_with_index) { proc { |num, i| puts "Num: #{num}, index: #{i}"}}
+  let(:block_with_index) { proc { |num, i| puts "Num: #{num}, index: #{i}" } }
   let(:range) { (1..5) }
   let(:my_hash) { { first_name: 'somoye', second_name: 'nusret' } }
   let(:hash_block) { proc { |key, value| puts "#{key} is #{value}" } }
@@ -105,7 +105,7 @@ describe Enumerable do
     end
 
     it 'return true if none of the array items are false or nil when no block or argument given' do
-     expect(range.my_all?(3)).to eq(range.all?(3))
+      expect(range.my_all?(3)).to eq(range.all?(3))
     end
   end
 end
