@@ -108,4 +108,56 @@ describe Enumerable do
       expect(range.my_all?(3)).to eq(range.all?(3))
     end
   end
+
+  describe '#my_any?' do
+    it 'return true if any of the array items are true when no block or argument given' do
+      expect(array.my_any?).to eq(array.any?)
+    end
+
+    it 'return true if any of the array items are member of such class' do
+      expect(array.my_any?(Numeric)).to eq(array.any?(Numeric))
+    end
+
+    it 'return true if any of the array items matches regex given' do
+      expect(array.my_any?(rg)).to eq(array.any?(rg))
+    end
+
+    it 'return true if any of the array items matches the given value' do
+      expect(array.my_any?(3)).to eq(array.any?(3))
+    end
+
+    it 'return true if any of the range items are member of given class' do
+      expect(range.my_any?(Numeric)).to eq(range.any?(Numeric))
+    end
+
+    it 'return true if any of the range items matches the given value' do
+      expect(range.my_any?(3)).to eq(range.any?(3))
+    end
+  end
+
+  describe '#my_none?' do
+    it 'return true if none of the array items are true when no block or argument given' do
+      expect(array.my_none?).to eq(array.none?)
+    end
+
+    it 'return true if none of the array items are member of such class' do
+      expect(array.my_none?(Numeric)).to eq(array.none?(Numeric))
+    end
+
+    it 'return true if none of the array items matches regex given' do
+      expect(array.my_none?(rg)).to eq(array.none?(rg))
+    end
+
+    it 'return true if none of the array items matches the given value' do
+      expect(array.my_none?(3)).to eq(array.none?(3))
+    end
+
+    it 'return true if none of the range items are member of given class' do
+      expect(range.my_none?(Numeric)).to eq(range.none?(Numeric))
+    end
+
+    it 'return true if none of the range items matches the given value' do
+      expect(range.my_none?(3)).to eq(range.none?(3))
+    end
+  end
 end
