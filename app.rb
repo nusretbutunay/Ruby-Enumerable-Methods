@@ -16,7 +16,7 @@ module Enumerable
         i += 1
       end
     end
-
+    new_array = to_h if is_a?(Hash)
     new_array
   end
 
@@ -39,7 +39,7 @@ module Enumerable
         i += 1
       end
     end
-
+    new_array = to_h if is_a?(Hash)
     new_array
   end
 
