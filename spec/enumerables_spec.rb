@@ -27,8 +27,8 @@ describe Enumerable do
     end
 
     it 'returns the original array' do
-      array.my_each
-      expect(array).to eq(array)
+      new_array = array.my_each
+      expect(new_array).to eq(array)
     end
 
     it 'Iterates through the array and executes block' do
@@ -60,8 +60,8 @@ describe Enumerable do
     end
 
     it 'returns the original array' do
-      array.my_each_with_index
-      expect(array).to eq(array)
+      new_array = array.my_each_with_index
+      expect(array).to eq(new_array)
     end
 
     it 'Iterates through the array and executes block' do
