@@ -1,25 +1,31 @@
 require './app'
 
 describe Enumerable do
-
   let(:array) { [1, 2, 3] }
-  let(:array_a) { [true, 2, 3] }
+  let(:array_a) { [false, 5, 3] }
+  let(:array_b) { [2, nil, 3] }
+  let(:array_c) { [3, 3, 3] }
+  let(:array_d) { [true, 5, 3] }
+  let(:array_e) { [false, nil] }
+  let(:words_a) { %w[dog door rod blade] }
+  let(:words_b) { %w[dog door dod dlade] }
+  let(:words_c) { %w[cog coor bod elade] }
   let(:block) { proc { |x| x * 2 } }
   let(:inject_block) { proc { |prod, n| prod * n } }
   let(:block_with_index) { proc { |num, i| puts "Num: #{num}, index: #{i}" } }
   let(:range) { (1..5) }
+  let(:range_a) { ('a'..'b') }
+  let(:range_b) { (1..1) }
   let(:my_hash) { { first_name: 'somoye', second_name: 'nusret' } }
   let(:hash_block) { proc { |key, value| puts "#{key} is #{value}" } }
   let(:rg) { '/d/' }
-  let(:context_a) {'Iterates through and' }
-  let(:context_b) {'executes block'}
-  let(:new_array) {[]}
+  let(:new_array) { [] }
 
   describe '#my_each' do
     it 'return Enumerator if no block is given' do
       expect(array.my_each).to be_a(Enumerator)
     end
-    
+
     it 'returns the original array' do
       array.my_each
       expect(array).to eq(array)
@@ -33,7 +39,10 @@ describe Enumerable do
     end
 
     it 'Iterates through the range and executes block' do
-      expect(range.my_each(&block)).to eq(range.each(&block))
+      counter = 0
+      pr = proc { counter += 1 }
+      range.my_each { pr.call }
+      expect(counter).to eq(range.size)
     end
 
     it 'Iterates through the hash and executes block' do
@@ -46,8 +55,20 @@ describe Enumerable do
   end
 
   describe '#my_each_with_index' do
-    it 'it iterates the array and return Enumerator if no block is given' do
+    it 'returns Enumerator if no block is given' do
       expect(array.my_each_with_index).to be_a(Enumerator)
+    end
+
+    it 'returns the original array' do
+      array.my_each_with_index
+      expect(array).to eq(array)
+    end
+
+    it 'Iterates through the array and executes block' do
+      counter = 0
+      pr = proc { counter += 1 }
+      array.my_each_with_index { pr.call }
+      expect(counter).to eql(array.size)
     end
 
     it 'Iterates through the array and executes block' do
@@ -90,112 +111,164 @@ describe Enumerable do
   end
 
   describe '#my_all?' do
-    it 'returns true if none of the array items are false or nil when no block or argument given' do
+    it 'returns true if none of the array items are false when no block or argument given' do
       expect(array.my_all?).to eq(true)
+    end
+
+    it 'returns false if any of the array items are false when no block or argument given' do
+      expect(array_a.my_all?).to eq(false)
     end
 
     it 'returns true if none of the array items are nil when no block or argument given' do
       expect(array.my_all?).to eq(true)
     end
 
+    it 'returns false if any of the array items are nil when no block or argument given' do
+      expect(array_b.my_all?).to eq(false)
+    end
+
     it 'returns true if all of the array items are member of class given' do
-      expect(array.my_all?(Numeric)).to eq(array.all?(Numeric))
+      expect(array.my_all?(Numeric)).to eq(true)
+    end
+
+    it 'returns false if any of the array items are not member of class given' do
+      expect(array_a.my_all?(Numeric)).to eq(false)
     end
 
     it 'returns true if all of the array items matches the Regex given' do
-      expect(array.my_all?(rg)).to eq(array.all?(rg))
+      expect(words_b.my_all?(/d/)).to eq(true)
+    end
+
+    it "returns false if any of the array items doesn\'t match the Regex given" do
+      expect(words_a.my_all?(rg)).to eq(false)
     end
 
     it 'returns true if all of the array items matches the value given' do
-      expect(array.my_all?(3)).to eq(array.all?(3))
+      expect(array_c.my_all?(3)).to eq(true)
     end
 
-    it 'returns true if none of the range items are false or nil when no block or argument given' do
-      expect(range.my_all?).to eq(range.all?)
+    it "returns false if any of the array items doesn\'t match the value given" do
+      expect(array.my_all?(3)).to eq(false)
+    end
+
+    it 'returns true if none of the range items are false when no block or argument given' do
+      expect(range.my_all?).to eq(true)
     end
 
     it 'returns true if all of the range items are member of class given' do
-      expect(range.my_all?(Numeric)).to eq(range.all?(Numeric))
+      expect(range.my_all?(Numeric)).to eq(true)
+    end
+
+    it 'returns false if any of the range items are not member of class given' do
+      expect(range_a.my_all?(Numeric)).to eq(false)
     end
 
     it 'returns true if all of the range items matches the given value' do
-      expect(range.my_all?(3)).to eq(range.all?(3))
+      expect(range_b.my_all?(1)).to eq(true)
+    end
+
+    it 'returns false if any of the range items dont match the given value' do
+      expect(range.my_all?(6)).to eq(false)
     end
   end
 
   describe '#my_any?' do
     it 'returns true if any of the array items are true when no block or argument given' do
-      expect(array.my_any?).to eq(array.any?)
+      expect(array_d.my_any?).to eq(true)
+    end
+
+    it 'returns false if none of the array items are true when no block or argument given' do
+      expect(array_e.my_any?).to eq(false)
     end
 
     it 'returns true if any of the array items are member of such class' do
-      expect(array.my_any?(Numeric)).to eq(array.any?(Numeric))
+      expect(array.my_any?(Numeric)).to eq(true)
+    end
+
+    it 'returns false if none of the array items are member of such class' do
+      expect(array_e.my_any?(Numeric)).to eq(false)
     end
 
     it 'returns true if any of the array items matches regex given' do
-      expect(array.my_any?(rg)).to eq(array.any?(rg))
+      expect(words_a.my_any?(/d/)).to eq(true)
+    end
+
+    it 'returns false if none of the array items matches regex given' do
+      expect(words_c.my_any?(/i/)).to eq(false)
     end
 
     it 'returns true if any of the array items matches the given value' do
-      expect(array.my_any?(3)).to eq(array.any?(3))
+      expect(array.my_any?(3)).to eq(true)
+    end
+
+    it 'returns false if none of the array items matches the given value' do
+      expect(array_e.my_any?(3)).to eq(false)
     end
 
     it 'returns true if any of the range items are member of given class' do
-      expect(range.my_any?(Numeric)).to eq(range.any?(Numeric))
+      expect(range.my_any?(Numeric)).to eq(true)
+    end
+
+    it 'returns false if none of the range items are member of given class' do
+      expect(range_a.my_any?(Numeric)).to eq(false)
     end
 
     it 'returns true if any of the range items matches the given value' do
-      expect(range.my_any?(3)).to eq(range.any?(3))
+      expect(range.my_any?(3)).to eq(true)
+    end
+
+    it 'returns false if none of the range items matches the given value' do
+      expect(range_a.my_any?(3)).to eq(false)
     end
   end
 
   describe '#my_none?' do
     it 'returns true if none of the array items are true when no block or argument given' do
-      expect(array.my_none?).to eq(array.none?)
+      expect(array_e.my_none?).to eq(true)
+    end
+
+    it 'returns false if any of the array items are true when no block or argument given' do
+      expect(array_a.my_none?).to eq(false)
     end
 
     it 'returns true if none of the array items are member of such class' do
-      expect(array.my_none?(Numeric)).to eq(array.none?(Numeric))
+      expect(array_e.my_none?(Numeric)).to eq(true)
+    end
+
+    it 'returns false if any of the array items are member of such class' do
+      expect(array.my_none?(Numeric)).to eq(false)
     end
 
     it 'returns true if none of the array items matches regex given' do
-      expect(array.my_none?(rg)).to eq(array.none?(rg))
+      expect(words_c.my_none?(/i/)).to eq(true)
+    end
+
+    it 'returns false if any of the array items matches regex given' do
+      expect(words_b.my_none?(/r/)).to eq(false)
     end
 
     it 'returns true if none of the array items matches the given value' do
-      expect(array.my_none?(3)).to eq(array.none?(3))
+      expect(array_c.my_none?(5)).to eq(true)
+    end
+
+    it 'returns false if any of the array items matches the given value' do
+      expect(array_a.my_none?(5)).to eq(false)
     end
 
     it 'returns true if none of the range items are member of given class' do
-      expect(range.my_none?(Numeric)).to eq(range.none?(Numeric))
+      expect(range_a.my_none?(Numeric)).to eq(true)
+    end
+
+    it 'returns false if any of the range items are member of given class' do
+      expect(range_b.my_none?(Numeric)).to eq(false)
     end
 
     it 'returns true if none of the range items matches the given value' do
-      expect(range.my_none?(3)).to eq(range.none?(3))
+      expect(range.my_none?(6)).to eq(true)
     end
 
-    it 'returns true if none of the array items are true when no block or argument given' do
-      expect(array.my_none?).to eq(false)
-    end
-
-    it 'returns true if none of the array items are member of such class' do
-      expect(array.my_none?(Numeric)).to eq(array.none?(Numeric))
-    end
-
-    it 'returns true if none of the array items matches regex given' do
-      expect(array.my_none?(rg)).to eq(array.none?(rg))
-    end
-
-    it 'returns true if none of the array items matches the given value' do
-      expect(array.my_none?(3)).to eq(array.none?(3))
-    end
-
-    it 'returns true if none of the range items are member of given class' do
-      expect(range.my_none?(Numeric)).to eq(range.none?(Numeric))
-    end
-
-    it 'returns true if none of the range items matches the given value' do
-      expect(range.my_none?(3)).to eq(range.none?(3))
+    it 'returns false if any of the range items matches the given value' do
+      expect(range.my_none?(3)).to eq(false)
     end
   end
 
